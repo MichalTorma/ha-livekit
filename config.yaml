@@ -1,6 +1,6 @@
 name: "LiveKit Server"
 description: "LiveKit server for real-time video, audio and data communication with Matrix integration"
-version: "0.1.0"
+version: "0.1.1"
 slug: "livekit"
 arch:
   - aarch64
