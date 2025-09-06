@@ -60,7 +60,9 @@ webhook_urls: []
 - **domain**: The domain where LiveKit will be accessible (default: `homeassistant.local`)
 - **http_port**: HTTP API and WebRTC port (default: `7880`)
 - **rtc_tcp_port**: RTC TCP port (default: `7881`)
-- **rtc_udp_port_min/max**: UDP port range for media streams (default: `50000-50099`)
+- **rtc_udp_port_min/max**: UDP port range for direct WebRTC media streams (default: `40000-40099`)
+  - **Important**: This range should NOT overlap with your TURN server's media relay ports
+  - If using Coturn addon, it uses 49152-65535, so LiveKit uses 40000-40099 to avoid conflicts
 
 **Important**: Make sure these ports don't conflict with other services, especially if you're running the Coturn add-on.
 
@@ -200,13 +202,30 @@ Add to your Element config:
 
 ## Network Configuration
 
+### Understanding Port Usage with TURN Servers
+
+**Important**: When running both LiveKit and a TURN server (like Coturn), you need to understand how ports are used:
+
+**LiveKit Direct Media Ports (40000-40099)**:
+- Used for direct WebRTC connections between clients and LiveKit
+- When clients can connect directly without NAT traversal
+
+**TURN Server Media Relay Ports (49152-65535)**:
+- Used by Coturn to relay media when direct connections fail
+- Clients behind strict NATs/firewalls use these ports
+
+**Why both are needed**:
+1. **Best case**: Clients connect directly to LiveKit (uses 40000-40099)
+2. **NAT/Firewall case**: Clients use TURN server (uses 49152-65535)
+3. LiveKit is configured to use your TURN server as fallback
+
 ### Port Requirements
 
 LiveKit requires the following ports to be accessible:
 
 - **7880/tcp**: HTTP API and WebRTC signaling
 - **7881/tcp**: RTC TCP port
-- **50000-50099/udp**: WebRTC media streams
+- **40000-40099/udp**: Direct WebRTC media streams (non-overlapping with TURN)
 
 ### Firewall Configuration
 
@@ -214,7 +233,9 @@ If you're running LiveKit behind a firewall:
 
 1. **Allow inbound TCP traffic** on your configured HTTP port (default: 7880)
 2. **Allow inbound TCP traffic** on your configured RTC TCP port (default: 7881)
-3. **Allow inbound UDP traffic** on your configured UDP port range (default: 50000-50099)
+3. **Allow inbound UDP traffic** on your configured UDP port range (default: 40000-40099)
+
+**Note**: Your TURN server (Coturn) should also have its ports open (3478, 5349, and 49152-65535).
 
 ### Router Configuration
 
