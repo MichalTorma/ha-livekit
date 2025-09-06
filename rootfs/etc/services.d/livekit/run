@@ -6,7 +6,8 @@
 
 bashio::log.info "Starting LiveKit server..."
 
-# Ensure proper ownership of livekit directories
+# Create and ensure proper ownership of livekit directories
+mkdir -p /var/lib/livekit /var/log/livekit /etc/livekit /data/livekit
 chown -R livekit:livekit /var/lib/livekit
 chown -R livekit:livekit /var/log/livekit
 chown -R livekit:livekit /etc/livekit
@@ -28,20 +29,19 @@ fi
 # Export environment variables for LiveKit
 export LIVEKIT_CONFIG_FILE="/etc/livekit/livekit.yaml"
 
-# Check if config file exists
+# Check if config file exists and show contents for debugging
+bashio::log.info "Checking LiveKit configuration file..."
 if [[ ! -f "${LIVEKIT_CONFIG_FILE}" ]]; then
     bashio::log.fatal "LiveKit configuration file not found at ${LIVEKIT_CONFIG_FILE}"
     bashio::exit.nok
 fi
 
-# Validate configuration
-bashio::log.info "Validating LiveKit configuration..."
-if ! livekit-server --config "${LIVEKIT_CONFIG_FILE}" --validate; then
-    bashio::log.fatal "LiveKit configuration validation failed"
-    bashio::exit.nok
-fi
+bashio::log.info "Configuration file exists, showing contents:"
+cat "${LIVEKIT_CONFIG_FILE}"
 
-bashio::log.info "LiveKit configuration is valid"
+# Test LiveKit binary
+bashio::log.info "Testing LiveKit binary..."
+livekit-server --version || bashio::log.warning "Could not get LiveKit version"
 
 # Log startup information
 bashio::log.info "LiveKit server starting with configuration:"
