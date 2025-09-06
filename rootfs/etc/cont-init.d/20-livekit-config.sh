@@ -112,6 +112,7 @@ if bashio::var.has_value "${WEBHOOK_URLS}" && [[ "${WEBHOOK_URLS}" != "[]" ]]; t
 
 # Webhook Configuration
 webhook:
+  api_key: ${API_KEY}
   urls:
 EOF
     for webhook in $(bashio::config 'webhook_urls'); do
