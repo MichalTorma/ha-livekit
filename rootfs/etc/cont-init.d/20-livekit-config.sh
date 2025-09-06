@@ -78,6 +78,41 @@ if bashio::var.true "${USE_ICE_LITE}"; then
 EOF
 fi
 
+# Add ICE servers (TURN/STUN) if TURN is enabled
+if bashio::var.true "${TURN_ENABLED}"; then
+    TURN_SERVERS=$(bashio::config 'turn_servers')
+    if bashio::var.has_value "${TURN_SERVERS}" && [[ "${TURN_SERVERS}" != "[]" ]]; then
+        cat >> "${CONFIG_FILE}" << EOF
+  ice_servers:
+EOF
+        for server in $(bashio::config 'turn_servers'); do
+            # Convert server format and add authentication
+            if bashio::var.has_value "${TURN_STATIC_AUTH_SECRET}"; then
+                cat >> "${CONFIG_FILE}" << EOF
+    - urls:
+        - "stun:${server#*:}"
+        - "turn:${server#*:}"
+      credential_type: "token"
+EOF
+            elif bashio::var.has_value "${TURN_USERNAME}" && bashio::var.has_value "${TURN_PASSWORD}"; then
+                cat >> "${CONFIG_FILE}" << EOF
+    - urls:
+        - "stun:${server#*:}"
+        - "turn:${server#*:}"
+      username: "${TURN_USERNAME}"
+      credential: "${TURN_PASSWORD}"
+EOF
+            else
+                cat >> "${CONFIG_FILE}" << EOF
+    - urls:
+        - "stun:${server#*:}"
+        - "turn:${server#*:}"
+EOF
+            fi
+        done
+    fi
+fi
+
 # Authentication keys
 cat >> "${CONFIG_FILE}" << EOF
 
@@ -86,37 +121,6 @@ keys:
   ${API_KEY}: ${API_SECRET}
 EOF
 
-# TURN server configuration
-if bashio::var.true "${TURN_ENABLED}"; then
-    bashio::log.info "Configuring TURN server integration..."
-    
-    cat >> "${CONFIG_FILE}" << EOF
-
-# TURN Server Configuration
-turn:
-  enabled: true
-EOF
-
-    # Read TURN servers from config
-    for server in $(bashio::config 'turn_servers'); do
-        cat >> "${CONFIG_FILE}" << EOF
-  servers:
-    - "${server}"
-EOF
-    done
-
-    # TURN authentication
-    if bashio::var.has_value "${TURN_STATIC_AUTH_SECRET}"; then
-        cat >> "${CONFIG_FILE}" << EOF
-  static_auth_secret: "${TURN_STATIC_AUTH_SECRET}"
-EOF
-    elif bashio::var.has_value "${TURN_USERNAME}" && bashio::var.has_value "${TURN_PASSWORD}"; then
-        cat >> "${CONFIG_FILE}" << EOF
-  username: "${TURN_USERNAME}"
-  password: "${TURN_PASSWORD}"
-EOF
-    fi
-fi
 
 # Logging configuration
 if bashio::var.true "${VERBOSE}"; then
