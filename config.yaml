@@ -99,4 +99,4 @@ schema:
   # Advanced Settings
   external_ip: "str?"
   use_ice_lite: "bool"
-  webhook_urls: ["url"]
+  webhook_urls: ["url?"]
