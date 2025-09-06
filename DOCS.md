@@ -214,10 +214,10 @@ Add to your Element config:
 - Used by Coturn to relay media when direct connections fail
 - Clients behind strict NATs/firewalls use these ports
 
-**Why both are needed**:
-1. **Best case**: Clients connect directly to LiveKit (uses 40000-40099)
-2. **NAT/Firewall case**: Clients use TURN server (uses 49152-65535)
-3. LiveKit is configured to use your TURN server as fallback
+**How this works**:
+1. **Direct connections**: Clients connect directly to LiveKit (uses 40000-40099)
+2. **NAT/Firewall fallback**: Clients can be configured to use your TURN server separately
+3. **Note**: TURN integration with LiveKit configuration is coming in a future version
 
 ### Port Requirements
 

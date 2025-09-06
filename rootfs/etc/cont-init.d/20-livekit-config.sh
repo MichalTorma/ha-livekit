@@ -78,39 +78,11 @@ if bashio::var.true "${USE_ICE_LITE}"; then
 EOF
 fi
 
-# Add ICE servers (TURN/STUN) if TURN is enabled
+# Note: ICE servers (TURN/STUN) configuration will be added in a future version
+# For now, LiveKit will work without TURN servers for direct connections
 if bashio::var.true "${TURN_ENABLED}"; then
-    TURN_SERVERS=$(bashio::config 'turn_servers')
-    if bashio::var.has_value "${TURN_SERVERS}" && [[ "${TURN_SERVERS}" != "[]" ]]; then
-        cat >> "${CONFIG_FILE}" << EOF
-  ice_servers:
-EOF
-        for server in $(bashio::config 'turn_servers'); do
-            # Convert server format and add authentication
-            if bashio::var.has_value "${TURN_STATIC_AUTH_SECRET}"; then
-                cat >> "${CONFIG_FILE}" << EOF
-    - urls:
-        - "stun:${server#*:}"
-        - "turn:${server#*:}"
-      credential_type: "token"
-EOF
-            elif bashio::var.has_value "${TURN_USERNAME}" && bashio::var.has_value "${TURN_PASSWORD}"; then
-                cat >> "${CONFIG_FILE}" << EOF
-    - urls:
-        - "stun:${server#*:}"
-        - "turn:${server#*:}"
-      username: "${TURN_USERNAME}"
-      credential: "${TURN_PASSWORD}"
-EOF
-            else
-                cat >> "${CONFIG_FILE}" << EOF
-    - urls:
-        - "stun:${server#*:}"
-        - "turn:${server#*:}"
-EOF
-            fi
-        done
-    fi
+    bashio::log.info "TURN server integration configured but not yet implemented in LiveKit config"
+    bashio::log.info "LiveKit will work for direct connections, TURN support coming soon"
 fi
 
 # Authentication keys
