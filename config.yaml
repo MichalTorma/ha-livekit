@@ -18,11 +18,9 @@ privileged: []
 ports:
   7880/tcp: 7880
   7881/tcp: 7881
-  50000-50099/udp: null
 ports_description:
   7880/tcp: "LiveKit HTTP API and WebRTC"
   7881/tcp: "LiveKit RTC TCP port"
-  50000-50099/udp: "LiveKit WebRTC UDP media ports"
 map:
   - config:rw
   - ssl:ro
