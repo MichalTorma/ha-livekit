@@ -1,0 +1,56 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Home Assistant Community Add-on: LiveKit Server
+# Runs the LiveKit server
+# ==============================================================================
+
+bashio::log.info "Starting LiveKit server..."
+
+# Ensure proper ownership of livekit directories
+chown -R livekit:livekit /var/lib/livekit
+chown -R livekit:livekit /var/log/livekit
+chown -R livekit:livekit /etc/livekit
+chown -R livekit:livekit /data/livekit
+
+# Change to livekit working directory
+cd /var/lib/livekit || bashio::exit.nok "Could not change to LiveKit working directory"
+
+# Get verbose setting for additional logging
+VERBOSE=$(bashio::config 'verbose')
+LOG_LEVEL=$(bashio::config 'log_level')
+
+if bashio::var.true "${VERBOSE}"; then
+    bashio::log.info "Starting LiveKit with verbose logging enabled (${LOG_LEVEL})"
+else
+    bashio::log.info "Starting LiveKit with ${LOG_LEVEL} logging"
+fi
+
+# Export environment variables for LiveKit
+export LIVEKIT_CONFIG_FILE="/etc/livekit/livekit.yaml"
+
+# Check if config file exists
+if [[ ! -f "${LIVEKIT_CONFIG_FILE}" ]]; then
+    bashio::log.fatal "LiveKit configuration file not found at ${LIVEKIT_CONFIG_FILE}"
+    bashio::exit.nok
+fi
+
+# Validate configuration
+bashio::log.info "Validating LiveKit configuration..."
+if ! livekit-server --config "${LIVEKIT_CONFIG_FILE}" --validate; then
+    bashio::log.fatal "LiveKit configuration validation failed"
+    bashio::exit.nok
+fi
+
+bashio::log.info "LiveKit configuration is valid"
+
+# Log startup information
+bashio::log.info "LiveKit server starting with configuration:"
+bashio::log.info "  Config file: ${LIVEKIT_CONFIG_FILE}"
+bashio::log.info "  Working directory: $(pwd)"
+bashio::log.info "  User: $(whoami)"
+
+# Execute LiveKit server
+# Note: Running as root is acceptable for Home Assistant addons
+# We could switch to livekit user, but for simplicity and HA addon compatibility, 
+# we'll run as root (which is the standard for HA addons)
+exec livekit-server --config "${LIVEKIT_CONFIG_FILE}"

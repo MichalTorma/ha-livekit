@@ -1,0 +1,93 @@
+#include <tunables/global>
+
+profile ha-livekit flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/ssl_certs>
+
+  # Capabilities
+  capability net_bind_service,
+  capability setuid,
+  capability setgid,
+  capability sys_resource,
+
+  # S6-Overlay
+  /init ix,
+  /bin/** ix,
+  /usr/bin/** ix,
+  /run/{s6,s6-rc*,service}/** ix,
+  /package/** ix,
+  /command/** ix,
+  /etc/services.d/** rwix,
+  /etc/cont-init.d/** rwix,
+  /etc/cont-finish.d/** rwix,
+  /run/{,**} rwk,
+  /dev/tty rw,
+
+  # Bashio
+  /usr/lib/bashio/** ix,
+  /tmp/** rwk,
+
+  # Access to options.json and other files within your addon
+  /data/** rw,
+
+  # Start new profile for service
+  /usr/local/bin/livekit-server cx -> livekit-server,
+
+  profile livekit-server flags=(attach_disconnected,mediate_deleted) {
+    #include <abstractions/base>
+    #include <abstractions/nameservice>
+    #include <abstractions/ssl_certs>
+
+    # Capabilities
+    capability net_bind_service,
+    capability setuid,
+    capability setgid,
+    capability sys_resource,
+
+    # LiveKit Server binary
+    /usr/local/bin/livekit-server r,
+
+    # Configuration and data files
+    /etc/livekit/** rw,
+    /var/lib/livekit/** rw,
+    /var/log/livekit/** rw,
+    /data/livekit/** rw,
+
+    # SSL certificates
+    /ssl/** r,
+
+    # Network
+    network inet stream,
+    network inet dgram,
+    network inet6 stream,
+    network inet6 dgram,
+
+    # System files
+    /etc/passwd r,
+    /etc/group r,
+    /etc/nsswitch.conf r,
+    /etc/hosts r,
+    /etc/resolv.conf r,
+    /etc/ssl/certs/** r,
+
+    # Proc filesystem
+    /proc/sys/net/core/rmem_default r,
+    /proc/sys/net/core/rmem_max r,
+    /proc/sys/net/core/wmem_default r,
+    /proc/sys/net/core/wmem_max r,
+    /proc/sys/net/ipv4/ip_local_port_range r,
+
+    # Temporary files
+    /tmp/** rw,
+    /var/tmp/** rw,
+
+    # Device access
+    /dev/null rw,
+    /dev/random r,
+    /dev/urandom r,
+
+    # Signal handling
+    signal receive set=(term, int, quit, kill, usr1, usr2),
+  }
+}

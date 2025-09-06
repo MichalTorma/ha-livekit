@@ -1,0 +1,103 @@
+name: "LiveKit Server"
+description: "LiveKit server for real-time video, audio and data communication with Matrix integration"
+version: "0.1.0"
+slug: "livekit"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+init: false
+startup: application
+boot: manual
+hassio_api: true
+hassio_role: default
+host_network: false
+privileged: []
+ports:
+  7880/tcp: 7880
+  7881/tcp: 7881
+  50000-50099/udp: null
+ports_description:
+  7880/tcp: "LiveKit HTTP API and WebRTC"
+  7881/tcp: "LiveKit RTC TCP port"
+  50000-50099/udp: "LiveKit WebRTC UDP media ports"
+map:
+  - config:rw
+  - ssl:ro
+  - data:rw
+options:
+  # Server Configuration
+  domain: "homeassistant.local"
+  http_port: 7880
+  rtc_tcp_port: 7881
+  rtc_udp_port_min: 50000
+  rtc_udp_port_max: 50099
+  
+  # Authentication & Security
+  api_key: ""
+  api_secret: ""
+  
+  # SSL/TLS Configuration
+  use_ssl: false
+  cert_file: "fullchain.pem"
+  pkey_file: "privkey.pem"
+  
+  # TURN Server Configuration (for integration with Coturn)
+  turn_enabled: true
+  turn_servers:
+    - "turn:homeassistant.local:3478"
+  turn_username: ""
+  turn_password: ""
+  turn_static_auth_secret: ""
+  
+  # Matrix Integration
+  matrix_homeserver_url: ""
+  matrix_widget_url: ""
+  
+  # Logging
+  log_level: "info"
+  verbose: false
+  
+  # Advanced Settings
+  external_ip: ""
+  use_ice_lite: false
+  webhook_urls: []
+
+schema:
+  # Server Configuration
+  domain: "str"
+  http_port: "port"
+  rtc_tcp_port: "port"
+  rtc_udp_port_min: "port"
+  rtc_udp_port_max: "port"
+  
+  # Authentication & Security
+  api_key: "str"
+  api_secret: "password"
+  
+  # SSL/TLS Configuration
+  use_ssl: "bool"
+  cert_file: "str?"
+  pkey_file: "str?"
+  
+  # TURN Server Configuration
+  turn_enabled: "bool"
+  turn_servers: ["str"]
+  turn_username: "str?"
+  turn_password: "password?"
+  turn_static_auth_secret: "password?"
+  
+  # Matrix Integration
+  matrix_homeserver_url: "url?"
+  matrix_widget_url: "url?"
+  
+  # Logging
+  log_level: "list(debug|info|warn|error)"
+  verbose: "bool"
+  
+  # Advanced Settings
+  external_ip: "str?"
+  use_ice_lite: "bool"
+  webhook_urls: ["url"]

@@ -1,0 +1,111 @@
+configuration:
+  domain:
+    name: Domain
+    description: >-
+      The domain name where LiveKit will be accessible. This should match
+      your Home Assistant domain or the domain where you'll access LiveKit.
+  http_port:
+    name: HTTP Port
+    description: >-
+      The port for LiveKit's HTTP API and WebRTC connections.
+      Default is 7880. Make sure this doesn't conflict with other services.
+  rtc_tcp_port:
+    name: RTC TCP Port
+    description: >-
+      The TCP port for LiveKit's RTC connections.
+      Default is 7881.
+  rtc_udp_port_min:
+    name: UDP Port Range (Min)
+    description: >-
+      The minimum UDP port for WebRTC media streams.
+      Default is 50000.
+  rtc_udp_port_max:
+    name: UDP Port Range (Max)
+    description: >-
+      The maximum UDP port for WebRTC media streams.
+      Default is 50099.
+  api_key:
+    name: API Key
+    description: >-
+      A unique identifier for your LiveKit server.
+      Use alphanumeric characters only. Required for authentication.
+  api_secret:
+    name: API Secret
+    description: >-
+      A secret key for JWT token generation.
+      Use a long, random string (minimum 32 characters) for security.
+  use_ssl:
+    name: Enable SSL/TLS
+    description: >-
+      Enable HTTPS and WSS for secure connections.
+      Requires valid SSL certificates in the /ssl directory.
+  cert_file:
+    name: SSL Certificate File
+    description: >-
+      The filename of your SSL certificate in the /ssl directory.
+      Usually something like 'fullchain.pem' or 'certificate.crt'.
+  pkey_file:
+    name: SSL Private Key File
+    description: >-
+      The filename of your SSL private key in the /ssl directory.
+      Usually something like 'privkey.pem' or 'private.key'.
+  turn_enabled:
+    name: Enable TURN Server
+    description: >-
+      Enable TURN server integration for NAT traversal.
+      Useful when clients are behind strict firewalls.
+  turn_servers:
+    name: TURN Server URLs
+    description: >-
+      List of TURN server URLs to use for NAT traversal.
+      Format: 'turn:hostname:port' or 'turns:hostname:port' for TLS.
+  turn_username:
+    name: TURN Username
+    description: >-
+      Username for TURN server authentication.
+      Leave empty if using static auth secret.
+  turn_password:
+    name: TURN Password
+    description: >-
+      Password for TURN server authentication.
+      Leave empty if using static auth secret.
+  turn_static_auth_secret:
+    name: TURN Static Auth Secret
+    description: >-
+      Static authentication secret for TURN server.
+      Should match the secret configured in your TURN server (e.g., Coturn).
+  matrix_homeserver_url:
+    name: Matrix Homeserver URL
+    description: >-
+      URL of your Matrix homeserver for integration.
+      Example: 'https://matrix.example.com'
+  matrix_widget_url:
+    name: Matrix Widget URL
+    description: >-
+      URL where the LiveKit widget will be accessible for Matrix clients.
+      Usually the same as your LiveKit domain.
+  log_level:
+    name: Log Level
+    description: >-
+      Set the logging verbosity level.
+      'debug' provides the most detailed logs, 'error' the least.
+  verbose:
+    name: Verbose Logging
+    description: >-
+      Enable verbose logging for debugging purposes.
+      This will override the log level to 'debug'.
+  external_ip:
+    name: External IP Address
+    description: >-
+      Specify the external IP address for WebRTC connections.
+      Leave empty for automatic detection.
+  use_ice_lite:
+    name: Use ICE Lite
+    description: >-
+      Enable ICE Lite mode for simplified ICE negotiation.
+      Useful in controlled network environments.
+  webhook_urls:
+    name: Webhook URLs
+    description: >-
+      List of webhook URLs to receive LiveKit events.
+      Useful for integration with other services.

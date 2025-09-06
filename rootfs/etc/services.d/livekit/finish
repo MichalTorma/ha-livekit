@@ -1,0 +1,19 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Home Assistant Community Add-on: LiveKit Server
+# Take down the service when the server exits
+# ==============================================================================
+
+readonly exit_code_container="${1}"
+readonly exit_code_service="${2:-256}"
+
+bashio::log.info "LiveKit server service exited with code ${exit_code_service}"
+
+if [[ "${exit_code_service}" -eq 256 ]]; then
+    bashio::log.warning "LiveKit server was terminated by container"
+else
+    bashio::log.info "LiveKit server exited normally"
+fi
+
+# Always exit the container when the service stops
+bashio::addon.stop
