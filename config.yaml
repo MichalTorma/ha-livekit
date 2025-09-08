@@ -1,6 +1,6 @@
 name: "LiveKit Server"
 description: "LiveKit server for real-time video, audio and data communication with Matrix integration"
-version: "0.1.6"
+version: "0.1.7"
 slug: "livekit"
 arch:
   - aarch64
@@ -18,9 +18,50 @@ privileged: []
 ports:
   7880/tcp: 7880
   7881/tcp: 7881
+  # UDP ports for WebRTC media (subset of 40000-40099 range)
+  40000/udp: 40000
+  40001/udp: 40001
+  40002/udp: 40002
+  40003/udp: 40003
+  40004/udp: 40004
+  40005/udp: 40005
+  40006/udp: 40006
+  40007/udp: 40007
+  40008/udp: 40008
+  40009/udp: 40009
+  40010/udp: 40010
+  40011/udp: 40011
+  40012/udp: 40012
+  40013/udp: 40013
+  40014/udp: 40014
+  40015/udp: 40015
+  40016/udp: 40016
+  40017/udp: 40017
+  40018/udp: 40018
+  40019/udp: 40019
 ports_description:
   7880/tcp: "LiveKit HTTP API and WebRTC"
   7881/tcp: "LiveKit RTC TCP port"
+  40000/udp: "WebRTC media port"
+  40001/udp: "WebRTC media port"
+  40002/udp: "WebRTC media port"
+  40003/udp: "WebRTC media port"
+  40004/udp: "WebRTC media port"
+  40005/udp: "WebRTC media port"
+  40006/udp: "WebRTC media port"
+  40007/udp: "WebRTC media port"
+  40008/udp: "WebRTC media port"
+  40009/udp: "WebRTC media port"
+  40010/udp: "WebRTC media port"
+  40011/udp: "WebRTC media port"
+  40012/udp: "WebRTC media port"
+  40013/udp: "WebRTC media port"
+  40014/udp: "WebRTC media port"
+  40015/udp: "WebRTC media port"
+  40016/udp: "WebRTC media port"
+  40017/udp: "WebRTC media port"
+  40018/udp: "WebRTC media port"
+  40019/udp: "WebRTC media port"
 map:
   - config:rw
   - ssl:ro
